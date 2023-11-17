@@ -1,86 +1,80 @@
+/*
+ * @Author: sunhaolin@hotoa.com
+ * @Date: 2022-05-03 10:29:51
+ * @LastEditors: sunhaolin@hotoa.com
+ * @LastEditTime: 2022-07-01 13:20:01
+ * @Description: 
+ */
+"use strict";
 const project = require('./package.json');
+const packageName = project.name;
 const packageLoader = require('@steedos/service-package-loader');
 
+/**
+ * @typedef {import('moleculer').Context} Context Moleculer's Context
+ */
 module.exports = {
-  name: "example-service",
+    name: packageName,
+    namespace: "steedos",
+    mixins: [packageLoader],
+    /**
+     * Settings
+     */
+    settings: {
+        packageInfo: {
+            path: __dirname,
+            name: packageName,
+			isPackage: true
+        },
+    },
 
-	mixins: [packageLoader],
+    /**
+     * Dependencies
+     */
+    dependencies: ['~packages-standard-objects', '~packages-@steedos/standard-space'],
+    /**
+     * Actions
+     */
+    actions: {
 
-  metadata: {
-    $package: {
-        name: project.name,
-        version: project.version,
-        path: __dirname,
-        isPackage: true
-    }
-  },
+    },
 
-  actions: {
-    hello: {
-      // 使用微服务方式定义 API 接口。
-      // 访问地址： GET /service/api/example-service/hello/:name
-      rest: { method: 'GET', path: '/hello/:name' },
-      handler(ctx) {
-        return {
-          data: 'Welcome ' + ctx.params.name
-        }
-      }
+    /**
+     * Events
+     */
+    events: {
+
     },
-    me: {
-      rest: { method: 'GET', path: '/me' },
-      // 在微服务中获取当前登录的用户信息
-      async handler(ctx) {
-        return ctx.meta.user
-      }
+
+    /**
+     * Methods
+     */
+    methods: {
+
     },
-    // 在微服务中调用graphql查询数据库
-    graphqlQuerySpaceUsers: {
-      rest: { method: 'GET', path: '/graphql' },
-      async handler(ctx) {
-        return await this.broker.call('api.graphql', {
-          query: `
-            query {
-              space_users(filters: ["user", "=", "${ctx.meta.user.userId}"]) {
-                name
-                organization__expand {
-                  name
-                }
-              }
-            }
-          `},
-          // 如果查询 GraphQL 需要带上当前用户的权限，需要传入 user 属性。
-          {
-            user: ctx.meta.user
-          }
-        )
-      },
+
+    merged(schema) {
+
     },
-    // 在微服务中调用objectql查询数据库, 需要 mixins: [require('@steedos/service-object-mixin')],
-    objectqlQuerySpaceUsers: {
-      rest: { method: 'GET', path: '/objectql' },
-      async handler(ctx) {
-        return await this.getObject('space_users').find(
-            {
-              filters: ['user', '=', ctx.meta.user.userId]
-            },
-            ctx.meta.user
-        )
-      }
+
+    /**
+     * Service created lifecycle event handler
+     */
+    async created() {
+
     },
-    // 使用微服务定义触发器
-    spaceUsersBeforeUpdate: {
-      trigger: { listenTo: 'space_users', when: ['beforeUpdate', 'beforeInsert']},
-      async handler(ctx) {
-        this.broker.logger.info('spaceUsersBeforeUpdate', ctx)
-      }
+
+    /**
+     * Service started lifecycle event handler
+     */
+    async started() {
+
+    },
+
+    /**
+     * Service stopped lifecycle event handler
+     */
+    async stopped() {
+
     }
-  },
-  events: {
-    "@space_users.updated": {
-      handler(payload) {
-          // 监听人员修改事件
-          this.broker.logger.info(payload);
-      }
-    }
-  }
-}
+};

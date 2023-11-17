@@ -1,8 +1,13 @@
 {
-    "name": "my-steedos-service",
-    "version": "0.0.1",
-    "description": "",
-    "main": "package.service.js",
-    "dependencies": {
-    }
-  }
+  "name": "@iamtutumo/ee_branding",
+  "description": "Custom brand",
+  "version": "2.5.7",
+  "main": "package.service.js",
+  "scripts": {},
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "2817dd5e4d74b319ea194e78d112888ef070ca4d"
+}
